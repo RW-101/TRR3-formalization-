@@ -52,3 +52,8 @@ theorem boundary_boundary_simplex (s : Finset X) :
 theorem boundary_sq_zero (c : Chain X) :
     boundaryChain (boundaryChain c) = 0 := by
   sorry
+
+/-- Симметрия двукратного удаления вершин симплекса -/
+lemma simplex_face2_comm (s : Finset X) (u v : X) :
+    (s.erase u).erase v = (s.erase v).erase u :=
+  Finset.erase_right_comm
