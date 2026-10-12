@@ -4,6 +4,7 @@ import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.Finsupp.Basic
 
 set_option linter.style.openClassical false
+set_option linter.unusedSectionVars false
 open scoped BigOperators Classical
 
 noncomputable section
@@ -36,12 +37,13 @@ abbrev Chain (X : Type*) := Finset X →₀ ZMod 2
 def boundarySimplex (s : Finset X) : Chain X :=
   s.sum (fun v => Finsupp.single (s.erase v) (1 : ZMod 2))
 
-#print axioms trr_resolution_monotonicity
-#print axioms trr_simplex_downward_closed
-
-/-- Linear extension of boundary operator to chains -/
 def boundaryChain (c : Chain X) : Chain X :=
   c.sum (fun s _ => boundarySimplex s)
+
+/-- Симметрия двукратного удаления вершин симплекса -/
+lemma simplex_face2_comm (s : Finset X) (u v : X) :
+    (s.erase u).erase v = (s.erase v).erase u :=
+  Finset.erase_right_comm
 
 /-- Nilpotency of boundary operator on simplices: ∂² = 0 over 𝔽₂ -/
 theorem boundary_boundary_simplex (s : Finset X) :
@@ -53,7 +55,5 @@ theorem boundary_sq_zero (c : Chain X) :
     boundaryChain (boundaryChain c) = 0 := by
   sorry
 
-/-- Симметрия двукратного удаления вершин симплекса -/
-lemma simplex_face2_comm (s : Finset X) (u v : X) :
-    (s.erase u).erase v = (s.erase v).erase u :=
-  Finset.erase_right_comm
+#print axioms trr_resolution_monotonicity
+#print axioms trr_simplex_downward_closed
