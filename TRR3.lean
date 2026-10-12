@@ -38,3 +38,17 @@ def boundarySimplex (s : Finset X) : Chain X :=
 
 #print axioms trr_resolution_monotonicity
 #print axioms trr_simplex_downward_closed
+
+/-- Linear extension of boundary operator to chains -/
+def boundaryChain (c : Chain X) : Chain X :=
+  c.sum (fun s _ => boundarySimplex s)
+
+/-- Nilpotency of boundary operator on simplices: ∂² = 0 over 𝔽₂ -/
+theorem boundary_boundary_simplex (s : Finset X) :
+    boundaryChain (boundarySimplex s) = 0 := by
+  sorry
+
+/-- Nilpotency of boundary operator on arbitrary chains: ∂² = 0 over 𝔽₂ -/
+theorem boundary_sq_zero (c : Chain X) :
+    boundaryChain (boundaryChain c) = 0 := by
+  sorry
