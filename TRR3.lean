@@ -45,15 +45,27 @@ lemma simplex_face2_comm (s : Finset X) (u v : X) :
     (s.erase u).erase v = (s.erase v).erase u :=
   Finset.erase_right_comm
 
-/-- Nilpotency of boundary operator on simplices: ∂² = 0 over 𝔽₂ -/
+/-- Тождество сложения над полем характеристики 2 -/
+lemma zmod2_add_self (x : ZMod 2) : x + x = 0 := by
+  revert x
+  decide
+
+/-- В пространстве цепей над 𝔽₂ удвоение любого элемента даёт нулевую цепь -/
+lemma chain_add_self (c : Chain X) : c + c = 0 := by
+  ext s
+  simp [zmod2_add_self]
+
+/-- Нильпотентность оператора границы на симплексах: ∂²(s) = 0 над 𝔽₂ -/
 theorem boundary_boundary_simplex (s : Finset X) :
     boundaryChain (boundarySimplex s) = 0 := by
   sorry
 
-/-- Nilpotency of boundary operator on arbitrary chains: ∂² = 0 over 𝔽₂ -/
+/-- Нильпотентность оператора границы на произвольных цепях: ∂²(c) = 0 над 𝔽₂ -/
 theorem boundary_sq_zero (c : Chain X) :
     boundaryChain (boundaryChain c) = 0 := by
   sorry
 
 #print axioms trr_resolution_monotonicity
 #print axioms trr_simplex_downward_closed
+#print axioms zmod2_add_self
+#print axioms chain_add_self
