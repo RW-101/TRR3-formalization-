@@ -156,3 +156,12 @@ theorem boundary_sq_zero (c : Chain X) :
 #print axioms chain_add_self
 #print axioms boundary_boundary_simplex
 #print axioms boundary_sq_zero
+
+def isCycle (c : Chain X) : Prop := boundaryChain c = 0
+
+def isBoundary (c : Chain X) : Prop := Exists (fun d => boundaryChain d = c)
+
+theorem boundary_is_cycle (c : Chain X) (h : isBoundary c) : isCycle c :=
+  Exists.elim h (fun d hd => by unfold isCycle; rw [<- hd]; exact boundary_sq_zero d)
+
+#print axioms boundary_is_cycle
