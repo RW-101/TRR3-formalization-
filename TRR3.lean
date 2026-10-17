@@ -150,12 +150,43 @@ theorem boundary_sq_zero (c : Chain X) :
   rw [<- boundaryChain_apply_mul (boundarySimplex s) t]
   rw [boundary_boundary_simplex s, Finsupp.zero_apply]
 
-#print axioms trr_resolution_monotonicity
-#print axioms trr_simplex_downward_closed
-#print axioms zmod2_add_self
-#print axioms chain_add_self
-#print axioms boundary_boundary_simplex
-#print axioms boundary_sq_zero
+
+lemma boundaryChain_zero : boundaryChain (0 : Chain X) = 0 :=
+  Finsupp.sum_zero_index
+
+theorem boundaryChain_add (c1 c2 : Chain X) :
+    boundaryChain (c1 + c2) = boundaryChain c1 + boundaryChain c2 := by
+  ext t
+  rw [Finsupp.add_apply, boundaryChain_apply_mul, boundaryChain_apply_mul, boundaryChain_apply_mul]
+  exact Finsupp.sum_add_index' (fun a => zero_mul _) (fun a b1 b2 => add_mul b1 b2 _)
+
+def boundaryHom : Chain X →+ Chain X where
+  toFun := boundaryChain
+  map_zero' := boundaryChain_zero
+  map_add' := boundaryChain_add
+
+lemma boundarySimplex_support_subset (s t : Finset X) (ht : t ∈ (boundarySimplex s).support) :
+    t ⊆ s := by
+  rw [Finsupp.mem_support_iff, boundarySimplex_apply] at ht
+  obtain ⟨v, hv, h_ne⟩ := Finset.exists_ne_zero_of_sum_ne_zero ht
+  by_cases h_eq : s.erase v = t
+  · rw [<- h_eq]; exact Finset.erase_subset v s
+  · rw [if_neg h_eq] at h_ne; exact False.elim (h_ne rfl)
+
+lemma boundarySimplex_card (s t : Finset X) (ht : t ∈ (boundarySimplex s).support) :
+    t.card + 1 = s.card := by
+  rw [Finsupp.mem_support_iff, boundarySimplex_apply] at ht
+  obtain ⟨v, hv, h_ne⟩ := Finset.exists_ne_zero_of_sum_ne_zero ht
+  by_cases h_eq : s.erase v = t
+  · rw [<- h_eq]; exact Finset.card_erase_add_one hv
+  · rw [if_neg h_eq] at h_ne; exact False.elim (h_ne rfl)
+
+theorem boundarySimplex_closed (K : Finset X → Prop)
+    (h_down : forall a b : Finset X, a ⊆ b -> K b -> K a)
+    (s : Finset X) (hs : K s) (t : Finset X) (ht : t ∈ (boundarySimplex s).support) :
+    K t :=
+  h_down t s (boundarySimplex_support_subset s t ht) hs
+
 
 def isCycle (c : Chain X) : Prop := boundaryChain c = 0
 
@@ -164,4 +195,13 @@ def isBoundary (c : Chain X) : Prop := Exists (fun d => boundaryChain d = c)
 theorem boundary_is_cycle (c : Chain X) (h : isBoundary c) : isCycle c :=
   Exists.elim h (fun d hd => by unfold isCycle; rw [<- hd]; exact boundary_sq_zero d)
 
+#print axioms trr_resolution_monotonicity
+#print axioms trr_simplex_downward_closed
+#print axioms zmod2_add_self
+#print axioms chain_add_self
+#print axioms boundary_boundary_simplex
+#print axioms boundary_sq_zero
 #print axioms boundary_is_cycle
+#print axioms boundaryChain_add
+#print axioms boundarySimplex_card
+#print axioms boundarySimplex_closed
