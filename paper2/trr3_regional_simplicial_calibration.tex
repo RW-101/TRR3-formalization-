@@ -29,7 +29,7 @@
 
 \author{
     \textbf{Ronen Weinberg} \\
-    Independent Researcher, SYMETR Research Lab, Jerusalem, Israel \\
+    Independent Researcher, Jerusalem, Israel \\
     Repository: \texttt{https://github.com/RW-101/TRR3-formalization-}
 }
 
@@ -45,17 +45,13 @@ Zero-lag volume conduction and inter-subject baseline shift remain two primary m
 
 \textbf{Keywords:} Relational Resolution Theory (TRR 3.0), Persistent Homology over $\mathbb{F}_2$, Imaginary Coherency, Volume Conduction Invariance, Empirical Bayes Stein Shrinkage, Zero-Shot BCI Calibration, Multichannel EEG.
 
----
-
 \section{Introduction}
 
-Topological Data Analysis (TDA) provides a coordinate-free mathematical framework for extracting multiscale relational invariants from point clouds and weighted networks. However, generic TDA is agnostic to the biophysics of electromagnetic field propagation in neural tissue. **Relational Resolution Theory 3.0 (TRR 3.0)**~\cite{weinberg2026trr1} bridges this gap by embedding exact simplicial homology over the prime field $\mathbb{F}_2 = \{0,1\}$ within a physically constrained phase-lagged metric space designed specifically for multichannel electroencephalography (EEG). By constructing the Vietoris--Rips filtration over Imaginary Coherency ($\mathrm{ImCoh}$)~\cite{nolte2004}, TRR 3.0 enforces an exact physical boundary condition: any instantaneous linear mixing of cortical dipoles ($\Delta\phi = 0 \pmod\pi$) yields zero imaginary cross-spectrum and maps to the metric ceiling $D(u,v) = 1.0$, guaranteeing immunity against volume-conduction short-circuiting.
+Topological Data Analysis (TDA) provides a coordinate-free mathematical framework for extracting multiscale relational invariants from point clouds and weighted networks. However, generic TDA is agnostic to the biophysics of electromagnetic field propagation in neural tissue. \textbf{Relational Resolution Theory 3.0 (TRR 3.0)}~\cite{weinberg2026trr1} bridges this gap by embedding exact simplicial homology over the prime field $\mathbb{F}_2 = \{0,1\}$ within a physically constrained phase-lagged metric space designed specifically for multichannel electroencephalography (EEG). By constructing the Vietoris--Rips filtration over Imaginary Coherency ($\mathrm{ImCoh}$)~\cite{nolte2004}, TRR 3.0 enforces an exact physical boundary condition: any instantaneous linear mixing of cortical dipoles ($\Delta\phi = 0 \pmod\pi$) yields zero imaginary cross-spectrum and maps to the metric ceiling $D(u,v) = 1.0$, guaranteeing immunity against volume-conduction short-circuiting.
 
 Despite this formal guarantee, scaling head-wide topological invariants across diverse human populations reveals a critical bottleneck. On a 5-subject benchmark (\texttt{S001--S005}, $290$ epochs) from the PhysioNet EEG Motor Movement/Imagery Database (EEGBCI)~\cite{schalk2004}, uncalibrated 20-channel zero-dimensional persistence $L_{\mathrm{tot}}(H_0)$ separates resting-state eyes-open ($\mathrm{EO}$) from eyes-closed ($\mathrm{EC}$) neurodynamics with $\mathrm{ROC\text{-}AUC} = 0.764$, rising to $0.788$ after 60 seconds of Empirical Bayes calibration. However, when the cohort is expanded fourfold to $N=20$ subjects (\texttt{S001--S020}, $1{,}160$ epochs), global uncalibrated accuracy drops to $\mathrm{AUC} = 0.650$ ($d = -0.60$), and 60-second univariate calibration reaches only $0.654$.
 
-In this study, we prove mathematically and demonstrate empirically that this degradation is not a limitation of $\mathbb{F}_2$ persistent homology, but rather a consequence of three pre-filtration and spatial aggregation bottlenecks. We then present the complete **TRR 3.0 Stage 7** mathematical architecture that resolves these bottlenecks and achieves state-of-the-art zero-shot and few-shot classification across all $20/20$ subjects.
-
----
+In this study, we prove mathematically and demonstrate empirically that this degradation is not a limitation of $\mathbb{F}_2$ persistent homology, but rather a consequence of three pre-filtration and spatial aggregation bottlenecks. We then present the complete \textbf{TRR 3.0 Stage 7} mathematical architecture that resolves these bottlenecks and achieves state-of-the-art zero-shot and few-shot classification across all $20/20$ subjects.
 
 \section{Mathematical Diagnosis of Global Degradation on Heterogeneous Cohorts}
 
@@ -64,12 +60,12 @@ Let $\mathbf{x}(t) \in \mathbb{R}^{N_{\mathrm{ch}}}$ ($N_{\mathrm{ch}}=20$) deno
 \subsection{Zero-Lag Denominator Inflation}
 In standard 4-second Imaginary Coherency~\cite{nolte2004}, the functional coupling between channels $u$ and $v$ is evaluated as:
 \begin{equation}
-    \mathrm{ImCoh}_{uv} = \frac{|\operatorname{Im}(S_{uv})|}{\sqrt{P_u P_v}}, \qquad S_{uv} = \frac{1}{W}\sum_{t=1}^{W} z_u(t)z_v^*(t),
+    \mathrm{ImCoh}_{uv} = \frac{|\operatorname{Im}(S_{uv})|}{\sqrt{P_u P_v}}, \quad S_{uv} = \frac{1}{W}\sum_{t=1}^{W} z_u(t)z_v^*(t),
     \label{eq:old_imcoh}
 \end{equation}
 where $P_u = S_{uu} = \operatorname{Re}(S_{uu})$ is the total narrowband power. During eyes-closed ($\mathrm{EC}$) alpha synchronization ($8\text{--}13\text{ Hz}$), the analytic signal at electrodes $u,v$ is a superposition of a dominant zero-lag standing-wave projection $A_0(t)$ ($\Delta\phi = 0$, volume-conducted from radial occipito-parietal dipoles) and true phase-lagged travelling cortical waves $\epsilon_u(t), \epsilon_v(t)$ ($\Delta\phi \neq 0$):
 \begin{equation}
-    z_u(t) = A_0(t) + \epsilon_u(t), \qquad z_v(t) = A_0(t) + \epsilon_v(t).
+    z_u(t) = A_0(t) + \epsilon_u(t), \quad z_v(t) = A_0(t) + \epsilon_v(t).
 \end{equation}
 Because $\operatorname{Im}(A_0(t)A_0^*(t)) \equiv 0$, the numerator $|\operatorname{Im}(S_{uv})|$ scales exclusively with the lagged interaction $|\operatorname{Im}(\langle \epsilon_u \epsilon_v^* \rangle)|$. In contrast, the denominator $\sqrt{P_u P_v} \approx |A_0|^2 + |\epsilon|^2$ scales linearly with the zero-lag standing-wave power $|A_0|^2$. In subjects whose Berger reaction is dominated by a high-amplitude radial standing wave, $|A_0|^2$ increases by a factor of $5\text{--}10\times$ during $\mathrm{EC}$, inflating the denominator of Eq.~\eqref{eq:old_imcoh} faster than the numerator. Consequently, $\mathrm{ImCoh}_{uv}$ paradoxically decreases during $\mathrm{EC}$, and the metric distance $D(u,v) = 1 - \mathrm{ImCoh}_{uv}$ shifts in the inverted direction ($d > 0$ rather than $d < 0$). As documented in Table~\ref{tab:diag}, exactly $4/20$ subjects (\texttt{S006}, \texttt{S007}, \texttt{S012}, \texttt{S015}) exhibit inverted effect signs ($d > 0$) under global 4-second $\mathrm{ImCoh}$.
 
@@ -115,14 +111,14 @@ S020 & $-0.52$ & $0.591$ & $-5.11$ & $1.000$ \\
 }
 \end{table}
 
----
-
 \section{The TRR 3.0 Stage 7 Mathematical Architecture}
 
 \subsection{Sub-Window Rectified Lag-Orthogonalized Imaginary Coherency ($\mathrm{rLagImCoh}$)}
 Each 4-second epoch is partitioned into $M = 7$ overlapping sub-windows of length $L_{\mathrm{sub}} = 1.0\text{ s}$ ($160$ samples) with step $0.5\text{ s}$ ($80$ samples), tapered by a Hann window $w(t)$. Let $S_{uv}^{(m)} = \frac{1}{L_{\mathrm{sub}}}\sum_{t} w^2(t) z_u^{(m)}(t) z_v^{(m)*}(t)$ be the local cross-spectrum in sub-window $m$, and $P_u^{(m)} = \operatorname{Re}(S_{uu}^{(m)})$. We define:
 \begin{equation}
+\resizebox{0.88\columnwidth}{!}{$\displaystyle
     \mathrm{rLagImCoh}_{uv} = \frac{1}{M}\sum_{m=1}^{M} \mathrm{clip}_{[0,1]}\!\left(\frac{\left|\operatorname{Im}\left(S_{uv}^{(m)}\right)\right|}{\sqrt{\max\!\left(\epsilon_{\mathrm{tol}},\, P_u^{(m)}P_v^{(m)} - \gamma\left[\operatorname{Re}\left(S_{uv}^{(m)}\right)\right]^2\right)}}\right),
+$}
     \label{eq:rlag}
 \end{equation}
 with Pascual-Marqui lag-orthogonalization parameter $\gamma = 0.85$~\cite{pascual2007} and $\epsilon_{\mathrm{tol}} = 10^{-15}$. The induced functional distance matrix is $D_{\mathrm{rLag}}(u,v) = 1 - \mathrm{rLagImCoh}_{uv}$ for $u \neq v$ and $D_{\mathrm{rLag}}(u,u) = 0$.
@@ -144,15 +140,15 @@ For each sub-complex $\mathcal{K}_r$ ($r \in \{\mathrm{post}, \mathrm{ant}\}$), 
 
 Let $\partial_1 \in \mathbb{F}_2^{|\mathcal{V}_r| \times |\mathcal{E}_r|}$ and $\partial_2 \in \mathbb{F}_2^{|\mathcal{E}_r| \times |\mathcal{T}_r|}$ denote the simplicial boundary matrices over $\mathbb{F}_2$ (where addition is bitwise XOR $\oplus$). Standard left-to-right column reduction yields pivot pairs $(i, j)$ defining the zero- and one-dimensional persistence invariants:
 \begin{align}
-    L_{\mathrm{tot}}(H_0 \mid \mathcal{K}_r) &= \sum_{v \in \mathrm{Piv}(\partial_1)} w(e_{m_1(v)}), \qquad \bar{H}_0(\mathcal{K}_r) = \frac{L_{\mathrm{tot}}(H_0 \mid \mathcal{K}_r)}{N_r - 1}, \\
+    L_{\mathrm{tot}}(H_0 \mid \mathcal{K}_r) &= \sum_{v \in \mathrm{Piv}(\partial_1)} w(e_{m_1(v)}), \quad \bar{H}_0(\mathcal{K}_r) = \frac{L_{\mathrm{tot}}(H_0 \mid \mathcal{K}_r)}{N_r - 1}, \\
     L_{\max}(H_1 \mid \mathcal{K}_r) &= \max_{i \in Z_1(\mathcal{K}_r)} \big(w_{\mathrm{death}}(e_i) - w(e_i)\big), \\
     L_{\mathrm{tot}}(H_1 \mid \mathcal{K}_r) &= \sum_{i \in Z_1(\mathcal{K}_r)} \big(w_{\mathrm{death}}(e_i) - w(e_i)\big),
 \end{align}
 where $Z_1(\mathcal{K}_r) = \{i \in \{1,\dots,|\mathcal{E}_r|\} : \mathrm{piv}(\partial_1(:,i)) = -1\}$ indexes cycle-creating edges, and $w_{\mathrm{death}}(e_i) = w(\tau_{m_2(i)})$ if $i \in \mathrm{Piv}(\partial_2)$ or $\max(D_{\mathrm{rLag}})$ otherwise.
 
-\textbf{Combinatorial Complexity Reduction:} Global filtration on $N_{\mathrm{ch}}=20$ vertices requires reducing $|\mathcal{T}_{\mathrm{glob}}| = \binom{20}{3} = 1{,}140$ triangles and $|\mathcal{E}_{\mathrm{glob}}| = \binom{20}{2} = 190$ edges. Anatomical decomposition requires only $|\mathcal{T}_{\mathrm{post}}| + |\mathcal{T}_{\mathrm{ant}}| = \binom{8}{3} + \binom{12}{3} = 56 + 220 = 276$ triangles and $\binom{8}{2} + \binom{12}{2} = 28 + 66 = 94$ edges, yielding a **$4.13\times$ reduction in 2-simplices** and a **$2.02\times$ reduction in 1-simplices**.
+\textbf{Combinatorial Complexity Reduction:} Global filtration on $N_{\mathrm{ch}}=20$ vertices requires reducing $|\mathcal{T}_{\mathrm{glob}}| = \binom{20}{3} = 1{,}140$ triangles and $|\mathcal{E}_{\mathrm{glob}}| = \binom{20}{2} = 190$ edges. Anatomical decomposition requires only $|\mathcal{T}_{\mathrm{post}}| + |\mathcal{T}_{\mathrm{ant}}| = \binom{8}{3} + \binom{12}{3} = 56 + 220 = 276$ triangles and $\binom{8}{2} + \binom{12}{2} = 28 + 66 = 94$ edges, yielding a \textbf{$4.13\times$ reduction in 2-simplices} and a \textbf{$2.02\times$ reduction in 1-simplices}.
 
-The dimensionless **Zero-Shot Topological Spatial Gradient** is defined as:
+The dimensionless \textbf{Zero-Shot Topological Spatial Gradient} is defined as:
 \begin{equation}
     \Delta_{\mathrm{spatial}} H_0(t) = \bar{H}_0(\mathcal{K}_{\mathrm{post}}, t) - \bar{H}_0(\mathcal{K}_{\mathrm{ant}}, t).
     \label{eq:grad}
@@ -162,50 +158,82 @@ The dimensionless **Zero-Shot Topological Spatial Gradient** is defined as:
 To ensure strict ablation transparency between phase-lagged $\mathbb{F}_2$ homology and local band power, we construct two distinct feature representations across subbands $\alpha$ ($8\text{--}13\text{ Hz}$), $\alpha_1$ ($7.5\text{--}10.5\text{ Hz}$), $\alpha_2$ ($10.0\text{--}13.5\text{ Hz}$), $\beta$ ($14.0\text{--}26.0\text{ Hz}$), and $\theta$ ($4.0\text{--}7.5\text{ Hz}$):
 \begin{enumerate}
     \item \textbf{Pure Topological TRR ($\mathbb{F}_2$ only, $0\%$ Local Power):} The 1D shift-invariant anchor is $\mathbf{x}_{\mathrm{inv}}^{\mathrm{pure}}(t) = [\Delta_{\mathrm{spatial}} H_0^{(\alpha)}(t)] \in \mathbb{R}^1$, and the 7D calibratable topological vector is:
-    \begin{align}
+    \begin{equation}
+    \begin{aligned}
         \mathbf{x}_{\mathrm{cal}}^{\mathrm{pure}}(t) = \Big[
-        &\Delta_{\mathrm{spatial}} H_0^{(\alpha)},\;
-        \bar{H}_0^{(\alpha_1)}(\mathcal{K}_{\mathrm{post}}) - \bar{H}_0^{(\alpha)}(\mathcal{K}_{\mathrm{ant}}),\;
-        \bar{H}_0^{(\alpha_2)}(\mathcal{K}_{\mathrm{post}}) - \bar{H}_0^{(\alpha)}(\mathcal{K}_{\mathrm{ant}}),\nonumber\\
-        &\bar{H}_0^{(\alpha)}(\mathcal{K}_{\mathrm{post}}) - \bar{H}_0^{(\beta)}(\mathcal{K}_{\mathrm{post}}),\;
-        \bar{H}_0^{(\alpha)}(\mathcal{K}_{\mathrm{post}}),\;
-        L_{\max}(H_1^{(\alpha)} \mid \mathcal{K}_{\mathrm{post}}),\;
-        L_{\mathrm{tot}}(H_1^{(\alpha)} \mid \mathcal{K}_{\mathrm{post}})
+        &\Delta_{\mathrm{spatial}} H_0^{(\alpha)},\\
+        &\bar{H}_0^{(\alpha_1)}(\mathcal{K}_{\mathrm{post}}) - \bar{H}_0^{(\alpha)}(\mathcal{K}_{\mathrm{ant}}),\\
+        &\bar{H}_0^{(\alpha_2)}(\mathcal{K}_{\mathrm{post}}) - \bar{H}_0^{(\alpha)}(\mathcal{K}_{\mathrm{ant}}),\\
+        &\bar{H}_0^{(\alpha)}(\mathcal{K}_{\mathrm{post}}) - \bar{H}_0^{(\beta)}(\mathcal{K}_{\mathrm{post}}),\\
+        &\bar{H}_0^{(\alpha)}(\mathcal{K}_{\mathrm{post}}),\;
+        L_{\max}(H_1^{(\alpha)} \mid \mathcal{K}_{\mathrm{post}}),\\
+        &L_{\mathrm{tot}}(H_1^{(\alpha)} \mid \mathcal{K}_{\mathrm{post}})
         \Big]^T \in \mathbb{R}^7.
-    \end{align}
+    \end{aligned}
+    \end{equation}
     \item \textbf{Hybrid SpecTopo TRR (Topology + Regional Band-Power Ratios):} Let $P_b(\mathcal{K}_r, t)$ denote the mean narrowband variance across channels in region $r$ and band $b$. We define two scale-free log-spectral ratios and a coupled spectral-topological index:
     \begin{align}
         \mathrm{rel\_\alpha}_{\mathrm{post}}(t) &= \ln\frac{P_\alpha(\mathcal{K}_{\mathrm{post}}, t) + \epsilon_{\mathrm{tol}}}{P_\beta(\mathcal{K}_{\mathrm{post}}, t) + P_\theta(\mathcal{K}_{\mathrm{post}}, t) + \epsilon_{\mathrm{tol}}}, \label{eq:rel_alpha}\\
         \mathrm{ratio}_{\mathrm{post/ant}}(t) &= \ln\frac{P_\alpha(\mathcal{K}_{\mathrm{post}}, t) + \epsilon_{\mathrm{tol}}}{P_\alpha(\mathcal{K}_{\mathrm{ant}}, t) + \epsilon_{\mathrm{tol}}}, \label{eq:ant_post}\\
         \mathrm{SpecTopo}(t) &= \bar{H}_0^{(\alpha)}(\mathcal{K}_{\mathrm{post}}, t)\cdot\exp\!\big(-0.5\,\mathrm{rel\_\alpha}_{\mathrm{post}}(t)\big). \label{eq:spectopo}
     \end{align}
-    The Hybrid zero-shot anchor is $\mathbf{x}_{\mathrm{inv}}^{\mathrm{hyb}}(t) = [\Delta_{\mathrm{spatial}} H_0^{(\alpha)}, \mathrm{rel\_\alpha}_{\mathrm{post}}, \mathrm{ratio}_{\mathrm{post/ant}}, \mathrm{SpecTopo}]^T \in \mathbb{R}^4$, and the full Hybrid calibratable vector is $\mathbf{x}_{\mathrm{cal}}^{\mathrm{hyb}}(t) = [\mathbf{x}_{\mathrm{cal}}^{\mathrm{pure}}(t)^T, \mathrm{rel\_\alpha}_{\mathrm{post}}, \mathrm{ratio}_{\mathrm{post/ant}}, \mathrm{SpecTopo}]^T \in \mathbb{R}^{10}$.
+    The Hybrid zero-shot anchor is $\mathbf{x}_{\mathrm{inv}}^{\mathrm{hyb}}(t) = [\Delta_{\mathrm{spatial}} H_0^{(\alpha)},\allowbreak \mathrm{rel\_\alpha}_{\mathrm{post}},\allowbreak \mathrm{ratio}_{\mathrm{post/ant}},\allowbreak \mathrm{SpecTopo}]^T \in \mathbb{R}^4$, and the full Hybrid calibratable vector is $\mathbf{x}_{\mathrm{cal}}^{\mathrm{hyb}}(t) = [\mathbf{x}_{\mathrm{cal}}^{\mathrm{pure}}(t)^T,\allowbreak \mathrm{rel\_\alpha}_{\mathrm{post}},\allowbreak \mathrm{ratio}_{\mathrm{post/ant}},\allowbreak \mathrm{SpecTopo}]^T \in \mathbb{R}^{10}$.
 \end{enumerate}
 
 \subsection{Post-Inversion Empirical Bayes Stein Shrinkage Fusion}
 In each fold of Leave-One-Subject-Out Cross-Validation (LOSO-CV), let $\mathcal{D}_{-s}$ denote the $N-1 = 19$ training subjects and $s$ the held-out target subject. Given a strictly causal calibration prefix of $k \in \{0,1,2,3,5,10,29\}$ resting-state $\mathrm{EO}$ epochs $\mathbf{X}_{s,\mathrm{EO}}[0:k]$, each coordinate $j \in \{1,\dots,p\}$ of $\mathbf{x}_{\mathrm{cal}}$ is standardized via the Normal-Inverse-Gamma (NIG) conjugate posterior against the training prior $(\mu_{p,j}, \sigma_{p,j}^2)$:
-\begin{align}
-    \tilde{\mu}_{s,j}(k) &= \frac{k\,\hat{\mu}_{s,j}(k) + \tau_0\,\mu_{p,j}}{k + \tau_0}, \\
-    \tilde{\sigma}_{s,j}^2(k) &= \frac{\max(0, k-1)\hat{s}_{s,j}^2(k) + \nu_0\,\sigma_{p,j}^2 + \frac{k\tau_0}{k+\tau_0}(\hat{\mu}_{s,j}(k)-\mu_{p,j})^2}{\max(0, k-1) + \nu_0},
-\end{align}
+\begin{equation}
+    \tilde{\mu}_{s,j}(k) = \frac{k\,\hat{\mu}_{s,j}(k) + \tau_0\,\mu_{p,j}}{k + \tau_0},
+\end{equation}
+\begin{equation}
+\resizebox{0.88\columnwidth}{!}{$\displaystyle
+    \tilde{\sigma}_{s,j}^2(k) = \frac{\max(0, k-1)\hat{s}_{s,j}^2(k) + \nu_0\,\sigma_{p,j}^2 + \frac{k\tau_0}{k+\tau_0}(\hat{\mu}_{s,j}(k)-\mu_{p,j})^2}{\max(0, k-1) + \nu_0},
+$}
+\end{equation}
 with fixed hyperparameters $\tau_0 = 3.0, \nu_0 = 5.0$, yielding calibrated feature vectors $\mathbf{z}_s(t \mid k) = (\mathbf{x}_{\mathrm{cal},s}(t) - \tilde{\boldsymbol{\mu}}_s(k)) \oslash \tilde{\boldsymbol{\sigma}}_s(k)$.
 
 Every training subject $j \in \mathcal{D}_{-s}$ undergoes the exact same $k$-epoch causal prefix calibration to form training matrices $\mathbf{Z}_{\mathrm{tr,EO}}(k)$ and $\mathbf{Z}_{\mathrm{tr,EC}}(k)$. Regularized Fisher Linear Discriminant weights are learned strictly on $\mathcal{D}_{-s}$:
 \begin{align}
     \Sigma_{\mathrm{pool}} &= \frac{1}{2}\big(\operatorname{Cov}(\mathbf{Z}_{\mathrm{tr,EO}}) + \operatorname{Cov}(\mathbf{Z}_{\mathrm{tr,EC}})\big), \\
-    \Sigma_{\mathrm{reg}} &= (1 - \lambda)\Sigma_{\mathrm{pool}} + \lambda\operatorname{diag}(\Sigma_{\mathrm{pool}}), \qquad \lambda = 0.20, \\
-    \mathbf{w} &= \Sigma_{\mathrm{reg}}^{-1}(\mathbf{m}_{\mathrm{tr,EC}} - \mathbf{m}_{\mathrm{tr,EO}}), \qquad \tilde{\mathbf{w}} = \frac{\mathbf{w}}{\sqrt{\operatorname{Var}(\mathbf{Z}_{\mathrm{tr,EO}}\mathbf{w}) + \epsilon_{\mathrm{tol}}}}.
+    \Sigma_{\mathrm{reg}} &= (1 - \lambda)\Sigma_{\mathrm{pool}} + \lambda\operatorname{diag}(\Sigma_{\mathrm{pool}}), \quad \lambda = 0.20, \\
+    \mathbf{w} &= \Sigma_{\mathrm{reg}}^{-1}(\mathbf{m}_{\mathrm{tr,EC}} - \mathbf{m}_{\mathrm{tr,EO}}), \\
+    \tilde{\mathbf{w}} &= \frac{\mathbf{w}}{\sqrt{\operatorname{Var}(\mathbf{Z}_{\mathrm{tr,EO}}\mathbf{w}) + \epsilon_{\mathrm{tol}}}}.
     \label{eq:lda_norm}
 \end{align}
 Because multiplying feature columns by a Stein weight $\alpha_k$ \textit{prior} to $\Sigma_{\mathrm{reg}}^{-1}$ scales $w_j \propto \alpha_k^{-1}$ and cancels $\alpha_k$ in $\mathbf{z}^T\mathbf{w}$, we project the zero-shot anchor $u_{\mathrm{inv}}(t) = \mathbf{z}_{\mathrm{inv},s}(t)^T\tilde{\mathbf{w}}_{\mathrm{inv}}$ and the calibrated discriminant $u_{\mathrm{cal}}(t \mid k) = \mathbf{z}_s(t \mid k)^T\tilde{\mathbf{w}}_{\mathrm{cal}}(k)$ into unit-variance coordinates independently via Eq.~\eqref{eq:lda_norm}, and fuse them \textit{post-inversion}:
 \begin{equation}
-    S_s(t \mid k) = (1 - \alpha_k)\,u_{\mathrm{inv}}(t) + \alpha_k\,u_{\mathrm{cal}}(t \mid k), \qquad \alpha_k = \frac{k}{k + \tau_0}.
+    S_s(t \mid k) = (1 - \alpha_k)\,u_{\mathrm{inv}}(t) + \alpha_k\,u_{\mathrm{cal}}(t \mid k), \quad \alpha_k = \frac{k}{k + \tau_0}.
     \label{eq:fusion}
 \end{equation}
 
----
-
 \section{Experimental Results and Statistical Audit ($N=20$, 1,160 Epochs)}
+
+Table~\ref{tab:main} and Figure~\ref{fig:main} report the complete experimental audit across $N=20$ subjects ($1{,}160$ epochs):
+\begin{itemize}
+    \item \textbf{Zero-Shot Pure Topological Breakthrough ($k=0$):} Restricting filtration to the posterior complex $\mathcal{K}_{\mathrm{post}}$ under $\mathrm{rLagImCoh}$ raises pooled zero-shot accuracy from $0.650$ to $0.780$ ($19/20$ subjects consistent). Subtracting the anterior reference complex $\mathcal{K}_{\mathrm{ant}}$ via $\Delta_{\mathrm{spatial}} H_0$ elevates pooled zero-shot accuracy to $\mathbf{0.837}$ ($\mathrm{Holdout} = 0.819$, mean within-subject $\mathrm{AUC} = \mathbf{0.927 \pm 0.022}$) and achieves $20/20$ subject consistency (two-sided paired Wilcoxon $p = 1.91 \times 10^{-6}$).
+    \item \textbf{Analysis of Out-of-Fold LOSO Centering at $k=0$:} In Table~\ref{tab:main}, uncentered $\Delta_{\mathrm{spatial}} H_0$ yields $\mathrm{Full\ AUC} = 0.837$ ($\mathrm{Holdout} = 0.819$), whereas \texttt{Pure Topological TRR} at $k=0$ yields $\mathrm{Full\ AUC} = 0.830$ ($\mathrm{Holdout} = 0.812$) while maintaining the exact same within-subject accuracy ($0.927 \pm 0.022$). This $0.007$ difference arises because $\Delta_{\mathrm{spatial}} H_0$ is naturally centered around physical zero ($\bar{H}_0(\mathcal{K}_{\mathrm{post}}) = \bar{H}_0(\mathcal{K}_{\mathrm{ant}})$), whereas subtracting the leave-one-out training mean $\mu_{i,-s}$ across $N-1=19$ subjects introduces a finite-sample jackknife variance inflation factor of $\frac{N}{N-1} = \frac{20}{19}$.
+    \item \textbf{Monotonic Full-Pool Causal Calibration Scaling:} Under Post-Inversion Stein Shrinkage Fusion, \texttt{Full Pool AUC} increases strictly monotonically with calibration budget $k$ for both Pure Topological TRR ($0.830 \to 0.831 \to 0.836 \to 0.840 \to 0.850 \to 0.874 \to 0.895$) and Hybrid SpecTopo TRR ($0.869 \to 0.874 \to 0.887 \to 0.897 \to 0.908 \to 0.928 \to 0.954$). Note that at $k=29$ ($60\text{ s}$) in Pure Topological TRR, Fisher LDA optimizes cross-subject pooled separability ($\mathrm{Full\ AUC} = 0.895$, $d = +1.01$) by assigning higher weight to $H_1$ cycle persistence, trading a slight shift in mean within-subject AUC ($0.928 \to 0.915$) for superior global threshold alignment.
+\end{itemize}
+
+\section{Conclusion}
+
+By resolving zero-lag denominator inflation, sub-epoch phase cancellation, and anterior MST dilution, TRR 3.0 Stage 7 proves that exact $\mathbb{F}_2$ persistent homology operates as a highly accurate, volume-conduction-invariant classifier in both zero-shot ($\mathrm{AUC}=0.837\text{--}0.869$) and rapid few-shot ($\mathrm{AUC}=0.897\text{--}0.928$ within $8\text{--}22\text{ s}$) regimes across heterogeneous multi-subject EEG cohorts.
+
+\begin{thebibliography}{9}
+\bibitem{weinberg2026trr1}
+R. Weinberg, ``Relational Resolution Theory 3.0: Formal Verification in Lean 4 and Volume-Conduction Invariant Simplicial Persistent Homology over $\mathbb{F}_2$ in Multichannel EEG,'' \textit{Zenodo Preprint}, DOI: \texttt{10.5281/zenodo.23454524}, Repository: \texttt{https://github.com/RW-101/TRR3-formalization-}, 2026.
+
+\bibitem{nolte2004}
+G. Nolte et al., ``Identifying true brain interaction from EEG data using the imaginary part of coherency,'' \textit{Clinical Neurophysiology}, vol. 115, no. 10, pp. 2292--2307, 2004.
+
+\bibitem{pascual2007}
+R. D. Pascual-Marqui, ``Instantaneous and lagged measurements of linear and nonlinear dependence between groups of multivariate time series: frequency decomposition,'' \textit{arXiv:0711.1455}, 2007.
+
+\bibitem{schalk2004}
+G. Schalk et al., ``BCI2000: a general-purpose brain-computer interface (BCI) system,'' \textit{IEEE Transactions on Biomedical Engineering}, vol. 51, no. 6, pp. 1034--1043, 2004.
+\end{thebibliography}
+
+\clearpage
 
 \begin{table*}[t]
 \centering
@@ -243,38 +271,11 @@ Hybrid SpecTopo TRR (Topo + Power, $k=29$) & $60\text{ s}$ & $+2.34$ & $\mathbf{
 }
 \end{table*}
 
-\begin{figure*}[t]
+\begin{figure*}[b]
     \centering
     \includegraphics[width=\textwidth]{trr_stage7_flawless_N20.pdf}
     \caption{\textbf{TRR 3.0 Stage 7 Benchmark across $N=20$ subjects ($1{,}160$ epochs, strict LOSO-CV).} \textbf{(A)} Receiver Operating Characteristic (ROC) curves comparing the Stage 6 global baseline ($k=0$, $\mathrm{AUC}=0.650$), the zero-shot pure topological spatial gradient ($k=0$, $\mathrm{AUC}=0.837$), Pure Topological TRR at $8\text{ s}$ ($k=3$, $\mathrm{AUC}=0.840$), and Hybrid SpecTopo TRR at $8\text{ s}$ ($k=3$, $\mathrm{AUC}=0.897$). \textbf{(B)} Strictly causal calibration scaling curves across resting-state $\mathrm{EO}$ prefix budgets $k \in \{0,1,2,3,5,10,29\}$ on the full $1{,}160$-epoch pool and balanced post-calibration holdout set (\texttt{EO[10:]} vs.\ \texttt{EC[10:]}).}
     \label{fig:main}
 \end{figure*}
-
-Table~\ref{tab:main} and Figure~\ref{fig:main} report the complete experimental audit across $N=20$ subjects ($1{,}160$ epochs):
-\begin{itemize}
-    \item \textbf{Zero-Shot Pure Topological Breakthrough ($k=0$):} Restricting filtration to the posterior complex $\mathcal{K}_{\mathrm{post}}$ under $\mathrm{rLagImCoh}$ raises pooled zero-shot accuracy from $0.650$ to $0.780$ ($19/20$ subjects consistent). Subtracting the anterior reference complex $\mathcal{K}_{\mathrm{ant}}$ via $\Delta_{\mathrm{spatial}} H_0$ elevates pooled zero-shot accuracy to $\mathbf{0.837}$ ($\mathrm{Holdout} = 0.819$, mean within-subject $\mathrm{AUC} = \mathbf{0.927 \pm 0.022}$) and achieves $20/20$ subject consistency (two-sided paired Wilcoxon $p = 1.91 \times 10^{-6}$).
-    \item \textbf{Analysis of Out-of-Fold LOSO Centering at $k=0$:} In Table~\ref{tab:main}, uncentered $\Delta_{\mathrm{spatial}} H_0$ yields $\mathrm{Full\ AUC} = 0.837$ ($\mathrm{Holdout} = 0.819$), whereas `Pure Topological TRR` at $k=0$ yields $\mathrm{Full\ AUC} = 0.830$ ($\mathrm{Holdout} = 0.812$) while maintaining the exact same within-subject accuracy ($0.927 \pm 0.022$). This $0.007$ difference arises because $\Delta_{\mathrm{spatial}} H_0$ is naturally centered around physical zero ($\bar{H}_0(\mathcal{K}_{\mathrm{post}}) = \bar{H}_0(\mathcal{K}_{\mathrm{ant}})$), whereas subtracting the leave-one-out training mean $\mu_{i,-s}$ across $N-1=19$ subjects introduces a finite-sample jackknife variance inflation factor of $\frac{N}{N-1} = \frac{20}{19}$.
-    \item \textbf{Monotonic Full-Pool Causal Calibration Scaling:} Under Post-Inversion Stein Shrinkage Fusion, `Full Pool AUC` increases strictly monotonically with calibration budget $k$ for both Pure Topological TRR ($0.830 \to 0.831 \to 0.836 \to 0.840 \to 0.850 \to 0.874 \to 0.895$) and Hybrid SpecTopo TRR ($0.869 \to 0.874 \to 0.887 \to 0.897 \to 0.908 \to 0.928 \to 0.954$). Note that at $k=29$ ($60\text{ s}$) in Pure Topological TRR, Fisher LDA optimizes cross-subject pooled separability ($\mathrm{Full\ AUC} = 0.895$, $d = +1.01$) by assigning higher weight to $H_1$ cycle persistence, trading a slight shift in mean within-subject AUC ($0.928 \to 0.915$) for superior global threshold alignment.
-\end{itemize}
-
----
-
-\section{Conclusion}
-
-By resolving zero-lag denominator inflation, sub-epoch phase cancellation, and anterior MST dilution, TRR 3.0 Stage 7 proves that exact $\mathbb{F}_2$ persistent homology operates as a highly accurate, volume-conduction-invariant classifier in both zero-shot ($\mathrm{AUC}=0.837\text{--}0.869$) and rapid few-shot ($\mathrm{AUC}=0.897\text{--}0.928$ within $8\text{--}22\text{ s}$) regimes across heterogeneous multi-subject EEG cohorts.
-
-\begin{thebibliography}{9}
-\bibitem{weinberg2026trr1}
-R. Weinberg, ``Relational Resolution Theory 3.0: Formal Verification in Lean 4 and Volume-Conduction Invariant Simplicial Persistent Homology over $\mathbb{F}_2$ in Multichannel EEG,'' \textit{Zenodo Preprint}, DOI: \texttt{10.5281/zenodo.23454524}, Repository: \texttt{https://github.com/RW-101/TRR3-formalization-}, 2026.
-
-\bibitem{nolte2004}
-G. Nolte et al., ``Identifying true brain interaction from EEG data using the imaginary part of coherency,'' \textit{Clinical Neurophysiology}, vol. 115, no. 10, pp. 2292--2307, 2004.
-
-\bibitem{pascual2007}
-R. D. Pascual-Marqui, ``Instantaneous and lagged measurements of linear and nonlinear dependence between groups of multivariate time series: frequency decomposition,'' \textit{arXiv:0711.1455}, 2007.
-
-\bibitem{schalk2004}
-G. Schalk et al., ``BCI2000: a general-purpose brain-computer interface (BCI) system,'' \textit{IEEE Transactions on Biomedical Engineering}, vol. 51, no. 6, pp. 1034--1043, 2004.
-\end{thebibliography}
 
 \end{document}
