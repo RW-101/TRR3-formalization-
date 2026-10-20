@@ -49,3 +49,6 @@ All 10 declarations depend solely on `[propext, Classical.choice, Quot.sound]`.
 ```bash
 pip install -r requirements.txt
 python benchmarks/trr_stage7_flawless_N20.py
+---
+**Contact:** weinbergronen@gmail.com
+---
